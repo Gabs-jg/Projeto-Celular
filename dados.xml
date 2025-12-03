@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<smartphone>
+    <configuracao>
+        <bateria>100%</bateria>
+        <fundo>https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&amp;w=1000&amp;auto=format&amp;fit=crop</fundo>
+    </configuracao>
+    
+    <tarefas>
+        <tarefa id="t1">Apresentar trabalho Web</tarefa>
+        <tarefa id="t2">Estudar para a prova</tarefa>
+    </tarefas>
+
+    <musicas>
+        <faixa id="m1" titulo="Space Journey" artista="Starlight Band" capa="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500" arquivo="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" />
+        <faixa id="m2" titulo="Summer Vibes" artista="Beach Boys" capa="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500" arquivo="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" />
+        <faixa id="m3" titulo="Night City" artista="Cyber Punkers" capa="https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=500" arquivo="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" />
+    </musicas>
+
+    <wallpapers>
+        <wp id="1" url="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" nome="Padrão" />
+        <wp id="2" url="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1000" nome="Natureza" />
+        <wp id="3" url="https://images.unsplash.com/photo-1483232539664-d89822fb5d3e?w=1000" nome="Chão" />
+        <wp id="4" url="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1000" nome="Tech" />
+    </wallpapers>
+
+    <apps>
+        <app id="3" nome="Arcade" icone="bi-joystick" cor="btn-success" />
+        <app id="7" nome="Calculadora" icone="bi-calculator" cor="btn-dark" />
+        <app id="2" nome="Clima" icone="bi-cloud-sun" cor="btn-info" />
+        <app id="5" nome="Configurações" icone="bi-gear" cor="btn-secondary" />
+        <app id="4" nome="Galeria" icone="bi-images" cor="btn-warning" />
+        <app id="9" nome="Música" icone="bi-music-note-beamed" cor="btn-danger" />
+        <app id="1" nome="Relógio" icone="bi-clock" cor="btn-primary" />
+        <app id="6" nome="Sobre" icone="bi-question-circle" cor="btn-danger" />
+        <app id="8" nome="Tarefas" icone="bi-check2-square" cor="btn-success" />
+    </apps>
+</smartphone>
