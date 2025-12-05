@@ -20,7 +20,7 @@ var musicasLista=[];
 var musicaIndiceAtual=0; 
 var audioPlayer=new Audio();
 
-// --- ÁUDIO E EFEITOS (NOVO) ---
+// --- ÁUDIO E EFEITOS ---
 var gameAudio = new Audio();
 gameAudio.loop = true;
 gameAudio.volume = 0.2;
@@ -81,10 +81,13 @@ $(document).ready(function() {
         // Verifica qual jogo está rodando
         if (jogoAtual === "snake") {
             mudarDirecaoSnake(e);
-            if([37,38,39,40].includes(e.keyCode)) e.preventDefault();
+            if([37,38,39,40].includes(e.keyCode))
+                e.preventDefault();
         }
         else if (jogoAtual === "dino") {
-            if(e.keyCode === 32 || e.keyCode === 38) { pularDino(); e.preventDefault(); }
+            if(e.keyCode === 32 || e.keyCode === 38) {
+                pularDino(); e.preventDefault();
+            }
         }
     });
     
@@ -94,10 +97,11 @@ $(document).ready(function() {
     
     // Áudio
     audioPlayer.addEventListener('timeupdate', function() {
-        if(audioPlayer.duration) $("#music-bar").css("width", (audioPlayer.currentTime/audioPlayer.duration)*100 + "%");
+        if(audioPlayer.duration)
+            $("#music-bar").css("width", (audioPlayer.currentTime/audioPlayer.duration)*100 + "%");
     });
     audioPlayer.addEventListener('ended', musicaProxima);
-    audioPlayer.addEventListener('error', function(e) { console.log("Erro áudio:", e); });
+    audioPlayer.addEventListener('error', function(e) {console.log("Erro áudio:", e); });
 });
 
 function iniciarMotor() {
@@ -225,7 +229,6 @@ function abrirApp(nome) {
                 </div>
             </div>`;
     }
-    // ... (Outros apps mantidos iguais) ...
     else if (nome === "Relógio") {
         conteudo = `<ul class="nav nav-tabs justify-content-center mb-4"><li class="nav-item"><a class="nav-link active" onclick="mostrarAbaRelogio('hora')">Hora</a></li><li class="nav-item"><a class="nav-link" onclick="mostrarAbaRelogio('crono')">Cronômetro</a></li><li class="nav-item"><a class="nav-link" onclick="mostrarAbaRelogio('alarme')">Alarme</a></li></ul><div id="tab-hora" class="text-center mt-5"><div id="relogio-grande" class="digital-clock">--:--:--</div><p class="text-muted" id="data-hoje"></p></div><div id="tab-crono" class="text-center mt-5" style="display:none;"><div id="display-cronometro" class="digital-clock">00:00:00</div><div class="mt-4"><button class="btn btn-success" onclick="iniciarCrono()"><i class="bi bi-play-fill"></i></button> <button class="btn btn-warning" onclick="pausarCrono()"><i class="bi bi-pause-fill"></i></button> <button class="btn btn-danger" onclick="zerarCrono()"><i class="bi bi-arrow-counterclockwise"></i></button></div></div><div id="tab-alarme" class="text-center mt-5" style="display:none;"><h4>Definir Alarme</h4><input type="time" id="input-alarme" class="form-control w-50 mx-auto my-3" style="font-size: 1.5rem;"><button class="btn btn-primary" onclick="salvarAlarme()">Ativar</button><div id="msg-alarme" class="mt-3 text-success fw-bold" style="display:none;">Alarme definido: <span id="span-alarme-hora"></span></div></div>`;
     }
@@ -254,7 +257,6 @@ function abrirApp(nome) {
     $("#app-content").html(conteudo);
     $("#app-window").fadeIn(200);
 
-    // Hooks
     if(nome==="Calculadora") calcLimpar();
     if(nome==="Relógio") { $("#data-hoje").text(new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })); }
     if(nome==="Música" && musicasLista.length>0 && (audioPlayer.src!==musicasLista[musicaIndiceAtual].arquivo && !audioPlayer.src.includes(musicasLista[musicaIndiceAtual].arquivo))) { audioPlayer.src = musicasLista[musicaIndiceAtual].arquivo; }
@@ -280,7 +282,7 @@ function fecharApp() {
 }
 
 // ============================================
-// ============ NOVA FUNÇÃO: LISTA DE APPS ====
+// ============ LISTA DE APPS =================
 // ============================================
 
 function mostrarDetalhesApps() {
@@ -377,7 +379,6 @@ function tocarSomJogo(url) {
         audioCtx.resume();
     }
     
-    // Use os sons sintetizados se não tiver URL
     if(url === undefined) return;
     
     gameAudio.src = url;
@@ -431,7 +432,6 @@ function tocarSFX(tipo) {
     }
 }
 
-
 function pararSomJogo() {
     gameAudio.pause();
     gameAudio.currentTime = 0;
@@ -446,50 +446,164 @@ function mostrarAbaRelogio(a){
     $("#tab-"+a).show();
 }
 
-function formatarTempo(s){var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return String(h).padStart(2,'0')+":"+String(m).padStart(2,'0')+":"+String(sec).padStart(2,'0')}
-function iniciarCrono(){if(!cronometroRodando){cronometroRodando=true;cronometroIntervalo=setInterval(function(){cronometroSegundos++;$("#display-cronometro").text(formatarTempo(cronometroSegundos))},1000)}}
-function pausarCrono(){cronometroRodando=false;clearInterval(cronometroIntervalo)}
-function zerarCrono(){pausarCrono();cronometroSegundos=0;$("#display-cronometro").text("00:00:00")}
-function salvarAlarme(){var v=$("#input-alarme").val();if(v){alarmeHora=v;$("#span-alarme-hora").text(alarmeHora);$("#msg-alarme").show();alert("Alarme!")}}
-function adicionarTarefa(){var t=$("#nova-tarefa-input").val();if(t){var id="t"+new Date().getTime();$(sistemaMemoria).find('tarefas').append(`<tarefa id="${id}">${t}</tarefa>`);abrirApp("Tarefas")}}
-function removerTarefa(id){$(sistemaMemoria).find('tarefas tarefa[id="'+id+'"]').remove();abrirApp("Tarefas")}
-function calcLimpar(){calcDisplay="0";calcExpressao="";calcUltimoResultado=null;calcOperadorAtual=null;calcAguardandoOperando=true;calcAtualizarDisplay()}
-function calcApagar(){if(calcDisplay.length>1)calcDisplay=calcDisplay.slice(0,-1);else{calcDisplay="0";calcAguardandoOperando=true}calcAtualizarDisplay()}
-function calcNumero(n){if(calcAguardandoOperando){calcDisplay=n;calcAguardandoOperando=false}else{if(n==='.'&&calcDisplay.includes('.'))return;if(n==='0'&&calcDisplay==='0')return;if(calcDisplay==='0'&&n!=='.')calcDisplay=n;else calcDisplay+=n}calcAtualizarDisplay()}
-function calcOperador(o){if(calcOperadorAtual&&!calcAguardandoOperando)calcCalcular();calcExpressao=calcDisplay+" "+o;calcUltimoResultado=parseFloat(calcDisplay);calcOperadorAtual=o;calcAguardandoOperando=true;calcAtualizarDisplay()}
-function calcCalcular(){if(!calcOperadorAtual||calcAguardandoOperando)return;var op=parseFloat(calcDisplay),res;switch(calcOperadorAtual){case'+':res=calcUltimoResultado+op;break;case'-':res=calcUltimoResultado-op;break;case'*':res=calcUltimoResultado*op;break;case'/':if(op===0){alert("Erro");calcLimpar();return}res=calcUltimoResultado/op;break}res=parseFloat(res.toFixed(10));calcExpressao=calcUltimoResultado+" "+calcOperadorAtual+" "+op+" =";calcDisplay=String(res);calcOperadorAtual=null;calcUltimoResultado=res;calcAguardandoOperando=true;calcAtualizarDisplay()}
-function calcAtualizarDisplay(){$("#display").text(calcDisplay);$("#expressao").text(calcExpressao)}
+function formatarTempo(s){
+    var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+    return String(h).padStart(2,'0')+":"+String(m).padStart(2,'0')+":"+String(sec).padStart(2,'0')
+}
 
-// --- MÚSICA (CORRIGIDO) ---
+function iniciarCrono(){
+    if(!cronometroRodando){
+        cronometroRodando=true;
+        cronometroIntervalo=setInterval(function(){
+            cronometroSegundos++;
+            $("#display-cronometro").text(formatarTempo(cronometroSegundos))
+        },1000)
+    }
+}
+
+function pausarCrono(){
+    cronometroRodando=false;
+    clearInterval(cronometroIntervalo)
+}
+
+function zerarCrono(){
+    pausarCrono();
+    cronometroSegundos=0;
+    $("#display-cronometro").text("00:00:00")
+}
+
+function salvarAlarme(){
+    var v=$("#input-alarme").val();
+    if(v){
+        alarmeHora=v;
+        $("#span-alarme-hora").text(alarmeHora);
+        $("#msg-alarme").show();
+        alert("Alarme!")
+    }
+}
+
+function adicionarTarefa(){
+    var t=$("#nova-tarefa-input").val();
+    if(t){
+        var id="t"+new Date().getTime();
+        $(sistemaMemoria).find('tarefas').append(`<tarefa id="${id}">${t}</tarefa>`);
+        abrirApp("Tarefas")
+    }
+}
+
+function removerTarefa(id){
+    $(sistemaMemoria).find('tarefas tarefa[id="'+id+'"]').remove();abrirApp("Tarefas")
+}
+
+function calcLimpar(){
+    calcDisplay="0";
+    calcExpressao="";
+    calcUltimoResultado=null;
+    calcOperadorAtual=null;
+    calcAguardandoOperando=true;
+    calcAtualizarDisplay()
+}
+
+function calcApagar(){
+    if(calcDisplay.length>1)
+        calcDisplay=calcDisplay.slice(0,-1);
+    else{
+        calcDisplay="0";
+        calcAguardandoOperando=true
+    }
+    calcAtualizarDisplay()
+}
+
+function calcNumero(n){
+    if(calcAguardandoOperando){
+        calcDisplay=n;
+        calcAguardandoOperando=false
+    }else{
+        if(n==='.'&&calcDisplay.includes('.'))
+            return;
+        if(n==='0'&&calcDisplay==='0')
+            return;
+        if(calcDisplay==='0'&&n!=='.')
+            calcDisplay=n;
+        else calcDisplay+=n
+    }
+    calcAtualizarDisplay()
+}
+
+function calcOperador(o){
+    if(calcOperadorAtual&&!calcAguardandoOperando)
+        calcCalcular();
+    calcExpressao=calcDisplay+" "+o;
+    calcUltimoResultado=parseFloat(calcDisplay);
+    calcOperadorAtual=o;
+    calcAguardandoOperando=true;
+    calcAtualizarDisplay()
+}
+
+function calcCalcular(){
+    if(!calcOperadorAtual||calcAguardandoOperando)
+        return;
+    var op=parseFloat(calcDisplay),res;
+    switch(calcOperadorAtual){
+        case'+':res=calcUltimoResultado+op;
+        break;
+        case'-':res=calcUltimoResultado-op;
+        break;
+        case'*':res=calcUltimoResultado*op;
+        break;
+        case'/':if(op===0){
+            alert("Erro");
+            calcLimpar();
+            return}res=calcUltimoResultado/op;
+            break
+        }
+        res=parseFloat(res.toFixed(10));
+        calcExpressao=calcUltimoResultado+" "+calcOperadorAtual+" "+op+" =";
+        calcDisplay=String(res);
+        calcOperadorAtual=null;
+        calcUltimoResultado=res;
+        calcAguardandoOperando=true;calcAtualizarDisplay()
+    }
+
+function calcAtualizarDisplay(){
+    $("#display").text(calcDisplay);
+    $("#expressao").text(calcExpressao)
+}
+
+// --- MÚSICA  ---
 function musicaPlayPause(){
-    if(audioPlayer.paused){
-        var playPromise = audioPlayer.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => { console.log("Auto-play prevented or error"); });
-        }
-        $("#play-icon").removeClass().addClass("bi bi-pause-fill");
-    } else {
-        audioPlayer.pause();
-        $("#play-icon").removeClass().addClass("bi bi-play-fill");
-    }
+    if(audioPlayer.paused){
+        var playPromise = audioPlayer.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => { console.log("Auto-play prevented or error"); });
+        }
+        $("#play-icon").removeClass().addClass("bi bi-pause-fill");
+    } else {
+        audioPlayer.pause();
+        $("#play-icon").removeClass().addClass("bi bi-play-fill");
+    }
 }
 function musicaProxima(){
-    musicaIndiceAtual++;
-    if(musicaIndiceAtual>=musicasLista.length)musicaIndiceAtual=0;
-    tocarNovaMusica();
+    musicaIndiceAtual++;
+    if(musicaIndiceAtual>=musicasLista.length)
+        musicaIndiceAtual=0;
+    tocarNovaMusica();
 }
+
 function musicaAnterior(){
-    musicaIndiceAtual--;
-    if(musicaIndiceAtual<0)musicaIndiceAtual=musicasLista.length-1;
-    tocarNovaMusica();
+    musicaIndiceAtual--;
+    if(musicaIndiceAtual<0)
+        musicaIndiceAtual=musicasLista.length-1;
+    tocarNovaMusica();
 }
+
 function tocarNovaMusica(){
-    $("#music-title").text(musicasLista[musicaIndiceAtual].titulo);
-    $("#music-artist").text(musicasLista[musicaIndiceAtual].artista);
-    $(".album-art").attr("src",musicasLista[musicaIndiceAtual].capa);
-    $("#play-icon").removeClass().addClass("bi bi-pause-fill");
-    audioPlayer.src=musicasLista[musicaIndiceAtual].arquivo;
-    audioPlayer.play().catch(e => console.log("Erro de play:", e));
+    $("#music-title").text(musicasLista[musicaIndiceAtual].titulo);
+    $("#music-artist").text(musicasLista[musicaIndiceAtual].artista);
+    $(".album-art").attr("src",musicasLista[musicaIndiceAtual].capa);
+    $("#play-icon").removeClass().addClass("bi bi-pause-fill");
+    audioPlayer.src=musicasLista[musicaIndiceAtual].arquivo;
+    audioPlayer.play().catch(e => console.log("Erro de play:", e));
 }
 
 // --- JOGOS (SNAKE, MEMORIA, DINO) ---
@@ -501,36 +615,83 @@ function iniciarSnakeUI() {
     $("#memoria-container").hide(); $("#dino-container").hide();
     $("#game-info").text("Snake | 0");
     var canvas = document.getElementById("canvas-cobrinha");
-    if(!canvas) return; 
+    if(!canvas) 
+        return; 
     ctx = canvas.getContext("2d");
     $("#snake-overlay").hide();
-    snake = [{x: 5, y: 5}, {x: 4, y: 5}, {x: 3, y: 5}]; pontosSnake = 0; dx = 1; dy = 0; criarComida();
-    if(snakeIntervalo) clearInterval(snakeIntervalo);
+    snake = [{x: 5, y: 5}, {x: 4, y: 5}, {x: 3, y: 5}];
+    pontosSnake = 0; dx = 1; dy = 0; criarComida();
+    if(snakeIntervalo)
+        clearInterval(snakeIntervalo);
     snakeIntervalo = setInterval(loopSnake, 150);
 }
+
 function loopSnake() {
     var cabeca = {x: snake[0].x + dx, y: snake[0].y + dy};
     var cols = canvasWidth / tamBloco; var rows = canvasHeight / tamBloco;
-    if (cabeca.x < 0 || cabeca.x >= cols || cabeca.y < 0 || cabeca.y >= rows || colisaoComSiMesmo(cabeca)) { gameOverSnake(); return; }
+    if (cabeca.x < 0 || cabeca.x >= cols || cabeca.y < 0 || cabeca.y >= rows || colisaoComSiMesmo(cabeca)) {
+        gameOverSnake();
+        return;
+    }
     snake.unshift(cabeca); 
-    if (cabeca.x === comida.x && cabeca.y === comida.y) { pontosSnake += 10; $("#game-info").text("Snake | " + pontosSnake); criarComida(); tocarSFX('comer'); } else { snake.pop(); }
+    if (cabeca.x === comida.x && cabeca.y === comida.y) {
+        pontosSnake += 10;
+        $("#game-info").text("Snake | " + pontosSnake);
+        criarComida();
+        tocarSFX('comer');
+    } else {
+        snake.pop();
+    }
     desenharSnake();
+
 }
 function desenharSnake() {
     ctx.fillStyle = "#222"; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     ctx.fillStyle = "red"; ctx.fillRect(comida.x * tamBloco, comida.y * tamBloco, tamBloco - 2, tamBloco - 2);
-    ctx.fillStyle = "#0f0"; snake.forEach(function(bloco) { ctx.fillRect(bloco.x * tamBloco, bloco.y * tamBloco, tamBloco - 2, tamBloco - 2); });
+    ctx.fillStyle = "#0f0"; snake.forEach(function(bloco) {
+        ctx.fillRect(bloco.x * tamBloco, bloco.y * tamBloco, tamBloco - 2, tamBloco - 2); });
 }
-function criarComida() { var cols = canvasWidth / tamBloco; var rows = canvasHeight / tamBloco; comida.x = Math.floor(Math.random() * cols); comida.y = Math.floor(Math.random() * rows); snake.forEach(function(bloco) { if(bloco.x == comida.x && bloco.y == comida.y) criarComida(); }); }
-function colisaoComSiMesmo(cabeca) { for (var i = 0; i < snake.length; i++) { if (cabeca.x === snake[i].x && cabeca.y === snake[i].y) return true; } return false; }
+function criarComida() {
+    var cols = canvasWidth / tamBloco;
+    var rows = canvasHeight / tamBloco;
+    comida.x = Math.floor(Math.random() * cols);
+    comida.y = Math.floor(Math.random() * rows);
+    snake.forEach(function(bloco) {
+        if(bloco.x == comida.x && bloco.y == comida.y)
+            criarComida();
+        });
+}
+
+function colisaoComSiMesmo(cabeca) {
+    for (var i = 0; i < snake.length; i++) {
+        if (cabeca.x === snake[i].x && cabeca.y === snake[i].y)
+            return true;
+    }
+        return false;
+}
+
 function mudarDirecaoSnake(evento) {
-    if(!snakeIntervalo) return; 
+    if(!snakeIntervalo) 
+        return; 
     var tecla = evento.keyCode;
-    if (tecla === 37 && dx !== 1) { dx = -1; dy = 0; }
-    if (tecla === 38 && dy !== 1) { dx = 0; dy = -1; }
-    if (tecla === 39 && dx !== -1) { dx = 1; dy = 0; }
-    if (tecla === 40 && dy !== -1) { dx = 0; dy = 1; }
+    if (tecla === 37 && dx !== 1) {
+        dx = -1;
+        dy = 0;
+    }
+    if (tecla === 38 && dy !== 1) {
+        dx = 0;
+        dy = -1;
+    }
+    if (tecla === 39 && dx !== -1) {
+        dx = 1;
+        dy = 0;
+    }
+    if (tecla === 40 && dy !== -1) {
+        dx = 0;
+        dy = 1;
+    }
 }
+
 function gameOverSnake() { 
     tocarSFX('gameover');
     pararSomJogo();
@@ -542,74 +703,131 @@ function gameOverSnake() {
 function iniciarMemoriaUI() {
     jogoAtual = "memoria";
     tocarSomJogo(sonsJogos.memoria);
-    $("#arcade-menu").hide(); $("#game-stage").show();
-    $("#snake-container").hide(); $("#memoria-container").show(); $("#dino-container").hide();
+    $("#arcade-menu").hide();
+    $("#game-stage").show();
+    $("#snake-container").hide();
+    $("#memoria-container").show();
+    $("#dino-container").hide();
     $("#game-info").text("Memória");
     var gridHtml = "";
     var baralho = [...iconesMemoria, ...iconesMemoria];
     baralho.sort(() => 0.5 - Math.random());
-    cartasMemoria = baralho; cartasViradas = []; paresEncontrados = 0; bloqueioMemoria = false;
+    cartasMemoria = baralho; cartasViradas = [];
+    paresEncontrados = 0;
+    bloqueioMemoria = false;
     baralho.forEach((icone, index) => { gridHtml += `<div class="col-3"><div class="card bg-secondary text-white d-flex align-items-center justify-content-center" style="height:70px; cursor:pointer; font-size:1.5rem;" id="carta-${index}" onclick="virarCarta(${index}, '${icone}')"><i class="bi bi-question-lg"></i></div></div>`; });
     $("#grid-memoria").html(gridHtml);
 }
+
 function virarCarta(index, icone) {
-    if(bloqueioMemoria) return;
+    if(bloqueioMemoria)
+        return;
     var elemento = $(`#carta-${index}`);
-    if(elemento.hasClass("bg-white") || elemento.hasClass("bg-success")) return;
+    if(elemento.hasClass("bg-white") || elemento.hasClass("bg-success"))
+        return;
     elemento.removeClass("bg-secondary text-white").addClass("bg-white text-primary border border-primary");
     elemento.html(`<i class="bi ${icone}"></i>`);
     cartasViradas.push({index: index, icone: icone, el: elemento});
-    if(cartasViradas.length === 2) { bloqueioMemoria = true; setTimeout(checarPar, 800); }
+    if(cartasViradas.length === 2) {
+        bloqueioMemoria = true;
+        setTimeout(checarPar, 800);
+    }
 }
+
 function checarPar() {
-    var c1 = cartasViradas[0]; var c2 = cartasViradas[1];
+    var c1 = cartasViradas[0];
+    var c2 = cartasViradas[1];
     if(c1.icone === c2.icone) {
         tocarSFX('acerto');
         c1.el.removeClass("bg-white text-primary border-primary").addClass("bg-success text-white border-success");
         c2.el.removeClass("bg-white text-primary border-primary").addClass("bg-success text-white border-success");
         paresEncontrados++;
-        if(paresEncontrados === iconesMemoria.length) { alert("Parabéns! Você venceu!"); pararSomJogo(); }
+        if(paresEncontrados === iconesMemoria.length) {
+            alert("Parabéns! Você venceu!");
+            pararSomJogo();
+        }
     } else {
         c1.el.removeClass("bg-white text-primary border-primary").addClass("bg-secondary text-white").html(`<i class="bi bi-question-lg"></i>`);
         c2.el.removeClass("bg-white text-primary border-primary").addClass("bg-secondary text-white").html(`<i class="bi bi-question-lg"></i>`);
     }
-    cartasViradas = []; bloqueioMemoria = false;
+    cartasViradas = [];
+    bloqueioMemoria = false;
 }
 
 function iniciarDinoUI() {
     jogoAtual = "dino";
     tocarSomJogo(sonsJogos.dino);
-    $("#arcade-menu").hide(); $("#game-stage").show();
-    $("#snake-container").hide(); $("#memoria-container").hide(); $("#dino-container").css("display", "flex");
+    $("#arcade-menu").hide();
+    $("#game-stage").show();
+    $("#snake-container").hide();
+    $("#memoria-container").hide();
+    $("#dino-container").css("display", "flex");
     $("#game-info").text("Dino | 0");
     var canvas = document.getElementById("canvas-dino");
-    if(!canvas) return;
+    if(!canvas)
+        return;
     dinoCtx = canvas.getContext("2d");
     $("#dino-overlay").hide();
     dinoObj = {x: 30, y: 0, w: 40, h: 40, dy: 0, jumpPower: -9, gravity: 0.5, grounded: false};
-    obstaculos = []; frameDino = 0; pontosDino = 0; velocidadeJogo = 3; tempoAteProximoObs = 0; 
-    if(dinoIntervalo) cancelAnimationFrame(dinoIntervalo);
+    obstaculos = [];
+    frameDino = 0;
+    pontosDino = 0;
+    velocidadeJogo = 3;
+    tempoAteProximoObs = 0; 
+    if(dinoIntervalo)
+        cancelAnimationFrame(dinoIntervalo);
     loopDino();
 }
-function pularDino() { if(dinoObj.grounded) { dinoObj.dy = dinoObj.jumpPower; dinoObj.grounded = false; tocarSFX('pulo'); } }
+
+function pularDino() {
+    if(dinoObj.grounded) {
+        dinoObj.dy = dinoObj.jumpPower;
+        dinoObj.grounded = false;
+        tocarSFX('pulo');
+    }
+}
+
 function loopDino() {
     dinoCtx.clearRect(0,0,280,340);
     var chaoY = 300;
-    dinoCtx.beginPath(); dinoCtx.moveTo(0, chaoY); dinoCtx.lineTo(280, chaoY); dinoCtx.stroke();
-    dinoObj.dy += dinoObj.gravity; dinoObj.y += dinoObj.dy;
-    if(dinoObj.y + dinoObj.h > chaoY) { dinoObj.y = chaoY - dinoObj.h; dinoObj.dy = 0; dinoObj.grounded = true; }
+    dinoCtx.beginPath();
+    dinoCtx.moveTo(0, chaoY);
+    dinoCtx.lineTo(280, chaoY);
+    dinoCtx.stroke();
+    dinoObj.dy += dinoObj.gravity;
+    dinoObj.y += dinoObj.dy;
+    if(dinoObj.y + dinoObj.h > chaoY) {
+        dinoObj.y = chaoY - dinoObj.h;
+        dinoObj.dy = 0;
+        dinoObj.grounded = true;
+    }
     dinoCtx.drawImage(dinoImg, dinoObj.x, dinoObj.y, dinoObj.w, dinoObj.h);
-    if (tempoAteProximoObs <= 0) { obstaculos.push({x: 280, y: chaoY - 30, w: 20, h: 30}); tempoAteProximoObs = Math.floor(Math.random() * 80) + 60; }
+    if (tempoAteProximoObs <= 0) {
+        obstaculos.push({x: 280, y: chaoY - 30, w: 20, h: 30});
+        tempoAteProximoObs = Math.floor(Math.random() * 80) + 60;
+    }
     tempoAteProximoObs--;
     for(var i=0; i<obstaculos.length; i++) {
-        var obs = obstaculos[i]; obs.x -= velocidadeJogo;
+        var obs = obstaculos[i];
+        obs.x -= velocidadeJogo;
         dinoCtx.drawImage(cactoImg, obs.x, obs.y, obs.w, obs.h);
-        if (dinoObj.x < obs.x + obs.w && dinoObj.x + dinoObj.w > obs.x && dinoObj.y < obs.y + obs.h && dinoObj.y + dinoObj.h > obs.y) { gameOverDino(); return; }
-        if(obs.x + obs.w < 0) { obstaculos.splice(i, 1); i--; pontosDino++; $("#game-info").text("Dino | " + pontosDino); if(pontosDino % 5 === 0) velocidadeJogo += 0.5; }
+        if (dinoObj.x < obs.x + obs.w && dinoObj.x + dinoObj.w > obs.x && dinoObj.y < obs.y + obs.h && dinoObj.y + dinoObj.h > obs.y) {
+            gameOverDino();
+            return;
+        }
+        if(obs.x + obs.w < 0) {
+            obstaculos.splice(i, 1);
+            i--;
+            pontosDino++;
+            $("#game-info").text("Dino | " + pontosDino);
+            if(pontosDino % 5 === 0)
+                velocidadeJogo += 0.5;
+        }
     }
     frameDino++;
     dinoIntervalo = requestAnimationFrame(loopDino);
 }
+
 function gameOverDino() { 
     tocarSFX('gameover');
     pararSomJogo();
